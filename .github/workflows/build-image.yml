@@ -12,7 +12,7 @@ permissions:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-  DOCKERFILE_PATH: ./Dockerfile
+  DOCKERFILE_PATH: ./Containerfile
 
 jobs:
   build-and-push:

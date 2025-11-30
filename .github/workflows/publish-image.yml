@@ -1,0 +1,59 @@
+name: publish-image
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Image version tag
+        required: true
+        type: string
+      source_registry:
+        description: Source registry
+        required: true
+        default: ghcr.io
+        type: string
+      source_image:
+        description: Source image name
+        required: true
+        default: ${{ github.repository }}
+        type: string
+      targets:
+        description: Target image references, one per line
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  retag-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Log in to source registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ inputs.source_registry }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull source image
+        run: |
+          SRC="${{ inputs.source_registry }}/${{ inputs.source_image }}:${{ inputs.version }}"
+          echo "Pulling $SRC"
+          docker pull "$SRC"
+
+      - name: Retag and push targets
+        run: |
+          SRC="${{ inputs.source_registry }}/${{ inputs.source_image }}:${{ inputs.version }}"
+          echo "Using source image: $SRC"
+          echo '${{ inputs.targets }}' | while read -r TARGET; do
+            [ -z "$TARGET" ] && continue
+            echo "Tagging and pushing $TARGET:${{ inputs.version }} and $TARGET:latest"
+            docker tag "$SRC" "$TARGET:${{ inputs.version }}"
+            docker tag "$SRC" "$TARGET:latest"
+            docker push "$TARGET:${{ inputs.version }}"
+            docker push "$TARGET:latest"
+          done
+

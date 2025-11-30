@@ -11,7 +11,7 @@ permissions:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository | replace('docker-', '') }}
+  IMAGE_NAME: ${{ startsWith(github.repository, 'docker-') && github.repository.substring(7) || github.repository }}
   DOCKERFILE_PATH: ./Containerfile
 
 jobs:

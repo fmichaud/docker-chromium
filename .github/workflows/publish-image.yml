@@ -15,7 +15,7 @@ on:
       source_image:
         description: Source image name
         required: true
-        default: ${{ github.repository | replace('docker-', '') }}
+        default: ${{ startsWith(github.repository, 'docker-') && github.repository.substring(7) || github.repository }}
         type: string
       targets:
         description: Target image references, one per line

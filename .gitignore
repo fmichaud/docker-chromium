@@ -1,0 +1,29 @@
+# Git Ignore
+
+# Operating System
+.DS_Store
+.localized
+
+# Editors/IDEs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Build artifacts
+*.log
+*.bak
+*.swp
+
+# Container related files
+.dockerignore
+.containerignore
+
+# Project specific exclusions
+# config/ and profiles/ are meant for container context or specific instances, not source control
+config/
+profiles/
+
+# Ignore generated image files if saved locally
+*.img
+*.tar
